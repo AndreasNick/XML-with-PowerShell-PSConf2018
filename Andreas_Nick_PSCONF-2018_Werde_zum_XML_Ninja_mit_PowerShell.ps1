@@ -16,9 +16,13 @@
     | '_ \  / _` || '_ \ | '_ \  / _ \ \ \ / / / _ \| '__|
     | | | || (_| || | | || | | || (_) | \ V / |  __/| |
     |_| |_| \__,_||_| |_||_| |_| \___/   \_/   \___||_|               #PSUGH
+	
+  Andreas Nick 
+  Twitter:@nickinformation 
+  www.software-virtualisierung.de 
+  www.andreasnick.com
 
 #>
-
 
 $PSDefaultParameterValues = @{"Write-Host:ForegroundColor" = "Green";"Write-Host:BackgroundColor" = "Black"}
 
@@ -109,7 +113,7 @@ function Format-XML
 }
 
 # Output via the function"
-Write-Host "Ausgabe über die Funktion" 
+Write-Host "Output over the funktion Format-XML" 
 Format-Xml $myxml 
 
 # Load XML from File
@@ -125,12 +129,13 @@ Format-Xml $myxml2 -indent 8
 
 # Read element
 $myxml2.applications #return two elements
-$myxml2.applications.Application.appname #return first element
+$myxml2.applications.Application.appname[0] 
+$myxml2.applications.Application.appname[1] 
+$myxml2.applications | ForEach-Object { "Application " + $_.Application.AppName} #return all "Appname" Elements as string
 
-$myxml2.applications | ForEach-Object { $_.Application.AppName} #return all "Appname" Elements as string
-
-# Olny one element in the xml!
+# Only one element in the xml!
 $myxml2.Applications.Global = "Test"
+
 $myxml2.applications.Application #!!! Is an array
 $myxml2.applications.Application[0].AppName = "TestApp"
 
@@ -139,11 +144,12 @@ Format-Xml $myxml2 -indent 4
 #Howto set attributes?
 
 $myxml2.Applications.SetAttribute("NewAttribute","Value123")
-$myxml2.Applications.Global.SetAttribute("NewAttribute","Value123") #Error!
+$myxml2.Applications.Global.SetAttribute("NewAttribute","Value123") #Error! 
 
 $myxml2.Applications.Global.GetType() #Object / String
-$myxml2.Applications.GetType() #XmlLinkedNode  
 
+$myxml2.Applications.GetType() #XmlLinkedNode  
+$myxml2.applications.Application.AppName[0].GetType() #String
 
 # XPATH Finally becoming a ninja?
 # Solution is xPath
@@ -190,6 +196,7 @@ $myxml2.SelectNodes("//Application[starts-with(AppName,'X')]") #return XmlNotepa
 #Search by attribute
 #Set Attribute (typecast)
 ([System.Xml.XmlElement]$myxml2.SelectSingleNode("//Application[starts-with(AppName,'X')]/Installer")).SetAttribute("TestAttributeValue","999")
+$myxml2.SelectSingleNode("//Application[starts-with(AppName,'X')]/Installer")
 
 Write-Host "Mit Attribute" 
 Format-Xml $myxml2 -indent 4
@@ -230,7 +237,7 @@ $AppNode.AppendChild($mynewXML.CreateElement("InstallerOptions")).InnerText = "/
 $AppNode.AppendChild($mynewXML.CreateElement("Cmdlet")).InnerText = "true"
 $AppNode.AppendChild($mynewXML.CreateElement("Enabled")).InnerText = "true"
 
-Write-Host "Neue xml mit Befehlen" 
+Write-Host "Neue xml with commands" 
 Format-Xml $mynewXML -indent 4
 
 
@@ -252,7 +259,7 @@ Format-Xml $mynewXML -indent 4
 $mynewXML.DocumentElement.SetAttribute("xmlns", "http://schemas.nick-it.de/coolxml/2017/manifest")
 $mynewXML.DocumentElement.SetAttribute("xmlns:ns2", "http://schemas.nick-it.de/coolxml/2018/manifest")
 
-Write-Host "Mit Namespace" 
+Write-Host "With Namespace" 
 Format-Xml $mynewXML -indent 4
 
 $mynewXML.SelectSingleNode("//Application/AppName") 
@@ -276,14 +283,13 @@ $mynewXML.SelectSingleNode("//Application/ns2:NewImportantentry", $ns)
 
 [xml] $Xml = @'
 <?xml version="1.0" encoding="utf-8"?>
-  <Book xmlns="http://:schemas-Nick-it.de/AppVBooks" xmlns:ups="http://:schemas-Nick-it.de/AppVBooksOptions">
+  <Book xmlns="http://:schemas-Nick-it.de/AppVBooks" >
     <projects>
       <project name="Softwarevirtualisierung mit App-V 5" date="2017-04-01">
         <editions>
           <edition language="English">2019-04-01</edition>
           <edition language="German">2017-04-01</edition>
           <edition language="French">Never-ever</edition>
-          <ups:commend>I don not speak French</ups:commend>
         </editions>
       </project>
     </projects>
@@ -291,20 +297,9 @@ $mynewXML.SelectSingleNode("//Application/ns2:NewImportantentry", $ns)
 '@
 
   $namespace = @{ns="http://:schemas-Nick-it.de/AppVBooks"}
- 
   $nodes = Select-Xml -xml $Xml -XPath "//ns:edition" -Namespace $namespace
-
-  Select-Xml -xml $Xml -XPath "//ns:commend" -Namespace $namespace 
   $nodes | %{ $_.Node }
   
-
-  $namespace2 = @{ns2="http://:schemas-Nick-it.de/AppVBooks"}
-
-  
-  $xml | Select-Xml -Content $Xml -XPath "//edition" | foreach {$_.node.InnerXML}
-  $Xml | Select-Xml -XPath "//edition" | foreach {$_.node.InnerXML}
-
-
   #Export/Import XML Object
 
   (Get-Process | Export-Clixml -Path "$env:temp\process.xml")
@@ -452,9 +447,9 @@ $nodes[0].Node
 
 
 
-  <#
+<#
  
-    Andreas Nick 2018
+  Andreas Nick 2018
 
-  #>
+#>
 
