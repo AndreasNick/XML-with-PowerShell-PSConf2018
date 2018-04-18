@@ -22,6 +22,8 @@
 
 $PSDefaultParameterValues = @{"Write-Host:ForegroundColor" = "Green";"Write-Host:BackgroundColor" = "Black"}
 
+throw "break - mark code and use F8"
+
 #
 #Start as a ninja student
 #
